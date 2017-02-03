@@ -1,1 +1,1 @@
-for image files
+Directory for all img files associated with the game

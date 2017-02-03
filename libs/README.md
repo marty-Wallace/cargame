@@ -1,1 +1,1 @@
-for library files
+Directory for any outside libraries used on the site 

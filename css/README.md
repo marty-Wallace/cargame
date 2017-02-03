@@ -1,1 +1,1 @@
-for css files
+Directory for all css files for the site 

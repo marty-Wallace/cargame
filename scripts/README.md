@@ -1,1 +1,1 @@
-for other scripts
+Directory for other scripts used on the site
