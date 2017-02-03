@@ -4,12 +4,31 @@
     <meta charset="UTF-8">
     <title>Project X</title>
 
-    <script src = "phaser.min.js"></script>
-    <script src = "Boot.js"></script>
-    <script src = "Preloader.js"></script>
+    <!-- Bootstrap css from cdn -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.css" integrity="sha256-75xVS8o85bn5eLYm/4w6RBwEaK8lmb206bazL2dD8Fg=" crossorigin="anonymous" />
+    <!-- All style sheets after bootstrap  -->
+
 
 </head>
 <body>
+
+
+    <!-- Load jquery and Bootstrap .js files from cdn -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js" integrity="sha256-1IKHGl6UjLSIT6CXLqmKgavKBXtr0/jJlaGMEkh+dhw=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc=" crossorigin="anonymous"></script>
+
+    <!-- Load Phaser  -->
+    <script src = "phaser.min.js"></script>
+
+    <!-- Start loading src files for game -->
+    <script src = "Boot.js"></script>
+    <script src = "Preloader.js"></script>
+    <script src = "Game.js"></script>
+    <script src = "MainMenu.js"></script>
+    <script src = "Story.js"></script>
+
+    <!-- Starts game after all src files loaded  -->
+    <script src = "Start.js"></script>
 
 </body>
 </html>
