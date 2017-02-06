@@ -1,0 +1,21 @@
+{ 
+    
+    "car": [
+        
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   5, 17,  36, 5,  65, 3,  41, 38,  24, 42,  5, 35]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   214, 87  ,  196, 76  ,  130, 7  ,  253, 43  ,  250, 76  ]
+        } ,
+        {
+            "density": 2, "friction": 0, "bounce": 0, 
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [   130, 7  ,  196, 76  ,  82, 76  ]
+        }
+    ]
+}

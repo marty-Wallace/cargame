@@ -43,7 +43,7 @@ Game.Preloader.resources = {
     ],
 
     'spritesheet' : [
-        ['car', 'assets/img/car.png', 264, 87]
+        ['car', 'assets/img/car_halfsize.png', 132, 43]
     ],
 
     'audio': [
@@ -51,8 +51,11 @@ Game.Preloader.resources = {
     ],
 
     'tilemap': [
-        //['map', 'assets/maps/level1.json', null, Phaser.Tilemap.TILED_JSON]
-        ['map', 'assets/maps/level1.csv']
+        ['map', 'assets/maps/level1_p2_3.json', null, Phaser.Tilemap.TILED_JSON]    /*JSON style tilemap loading */
+        //['map', 'assets/maps/level1.csv']                                         /* CSV style Tilemap loading */
 
+    ],
+    'physics': [
+        ['car_physics', 'assets/physics/car_physics_halfsize.json']
     ]
 };
