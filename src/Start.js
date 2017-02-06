@@ -6,7 +6,7 @@
 
 window.onload = function(){
 
-    var game = new Phaser.Game(800,600,Phaser.CANVAS,'');
+    var game = new Phaser.Game(640, 960, Phaser.CANVAS, 'ProjectX');
 
     //add all the states (these are all the js files)
     game.state.add('Boot',Game.Boot);
