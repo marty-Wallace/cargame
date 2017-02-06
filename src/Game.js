@@ -79,7 +79,7 @@ Game.Game.prototype = {
             }else{
                 velocityX = Math.max(-maxVelocityX, velocityX * speedX)
             }
-            vehicle.body.moveLeft(velocityX);
+            vehicle.body.moveLeft(-velocityX);
         }
 
         else if (cursors.right.isDown){
