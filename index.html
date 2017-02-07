@@ -6,11 +6,17 @@
 
     <!-- Bootstrap css from cdn -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.css" integrity="sha256-75xVS8o85bn5eLYm/4w6RBwEaK8lmb206bazL2dD8Fg=" crossorigin="anonymous" />
-    <!-- All style sheets after bootstrap  -->
+    <!-- Bootstrap-theme from cdn -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha256-bHQiqcFbnJb1Qhh61RY9cMh6kR0gTuQY6iFOBj1yj00=" crossorigin="anonymous" />
+    <!-- All custom style sheets after bootstrap  -->
+    <link rel="stylesheet" href="css/custom.css">
 
 
 </head>
 <body>
+
+    <!-- Phaser game will start in #gameContainer if it exists -->
+    <div id="gameContainer" style="max-width:540px;margin:auto;"></div>
 
 
     <!-- Load jquery and Bootstrap .js files from cdn -->
@@ -18,7 +24,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc=" crossorigin="anonymous"></script>
 
     <!-- Load Phaser  -->
-    <script src = "src/phaser.min.js"></script>
+    <script src = "src/phaser.js"></script>
 
     <!-- Start loading src files for game -->
     <script src = "src/Boot.js"></script>
