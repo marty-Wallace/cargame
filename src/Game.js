@@ -8,29 +8,32 @@
 Game.Game = function(game) { };
 
 
-var map;
-var tile_layer;
-var poly_tiles;
+var map;                                // our tile-map
+var tile_layer;                         // the tile layer, which we don't actually interact with. It's just there to be pretty
+var poly_tiles;                         // the terrain which we collide with
 
-var vehicle;
-var startX = 46, startY = 4*32;
-var cursors;
-var dist = 0;
+var vehicle;                            // the vehicle!
+var startX = 46, startY = 4*32;         // starting position (we can move this into the maps later if we need)
+var cursors;                            // all of our possible cursor actions
+var score = 0;                          // the current score of the player
+var furthestX = startX;                 // the further the player gets the more we will add to their score (maybe)
 
-var music;
+var music;                              // the audio we will be blastin
 
-var VELOCITY_PER_TICK = 150;
-var VELOCITY_MULTIPLIER = 0.85;
+var VELOCITY_PER_TICK = 160;            // the amount of velocity to add per update when a key is pressed
+var VELOCITY_MULTIPLIER = 0.85;         // the multiplier we apply each update to the current velocity
 
-var ANGULAR_VELOCITY_PER_TICK = 1;
-var ANGULAR_VELOCITY_MULTIPLIER = 0.9;
-var MAX_ANGULAR_VELOCITY = 4;
+var ANGULAR_VELOCITY_PER_TICK = 1;      // the amount of angular velocity to add per update when a key is pressed
+var ANGULAR_VELOCITY_MULTIPLIER = 0.9;  // the multiplier we apply each update to the current angular velocity
+var MAX_ANGULAR_VELOCITY = 4;           // the maximum angular velocity we will allow the vehicle to have
 
-var WORLD_RESTITUTION = 0.25;
-var WORLD_GRAVITY = 1800;
+var FLIPPED_ANGLE = 91;                // the maximum angle in degrees where we consider the vehicle to not be flipped
 
-var LEVEL = 2;
-var level32s = [2];
+var WORLD_RESTITUTION = 0.25;           // how bouncy is the world we live in
+var WORLD_GRAVITY = 1800;               // how much gravity in the world
+
+var LEVEL = 2;                          // the current level we are testing
+var level32s = [2];                     // the list of levels which use a 32x32px tile-set, (so we know which one to load)
 
 Game.Game.prototype = {
 
@@ -74,6 +77,7 @@ Game.Game.prototype = {
 
         poly_tiles = game.physics.p2.convertCollisionObjects(map, 'terrain', true);
 
+
         vehicle = game.add.sprite(startX, startY, 'car', 0);
         game.physics.p2.enable(vehicle);
         vehicle.anchor.setTo(0.5, 0.5);
@@ -89,8 +93,17 @@ Game.Game.prototype = {
 
     update: function(game) {
 
-        vehicle.body.velocity.x *= VELOCITY_MULTIPLIER;
-        vehicle.body.angularVelocity *= ANGULAR_VELOCITY_MULTIPLIER;
+
+        var touchingDown = this.touchingDown(vehicle);
+
+        if(touchingDown){
+            vehicle.body.velocity.x *= VELOCITY_MULTIPLIER;
+            vehicle.body.angularVelocity *= ANGULAR_VELOCITY_MULTIPLIER;
+        }
+
+        if(this.isFlipped(vehicle, touchingDown)) {
+            this.resetPlayer();
+        }
 
         /*
             Right key applies anti-clockwise angular velocity
@@ -99,7 +112,7 @@ Game.Game.prototype = {
             Down key applies backwards momentum (always to the left for now)
          */
 
-        if (cursors.right.isDown){
+        if (cursors.right.isDown && touchingDown){
             vehicle.body.angularVelocity += ANGULAR_VELOCITY_PER_TICK;
             /*
             if(vehicle.body.angularVelocity > MAX_ANGULAR_VELOCITY){
@@ -109,30 +122,63 @@ Game.Game.prototype = {
 
         }
 
-        else if (cursors.left.isDown){
+        else if (cursors.left.isDown && touchingDown){
             vehicle.body.angularVelocity -= ANGULAR_VELOCITY_PER_TICK;
             /*
-            if(vehicle.body.angularVelocity < - MAX_ANGULAR_VELOCITY){
-                vehicle.body.angularVelocity = - MAX_ANGULAR_VELOCITY;
+            if(vehicle.body.angularVelocity < -MAX_ANGULAR_VELOCITY){
+                vehicle.body.angularVelocity = -MAX_ANGULAR_VELOCITY;
             }
             */
         }
 
-        if(cursors.down.isDown){
+        if(cursors.down.isDown && touchingDown){
             vehicle.body.velocity.x -= VELOCITY_PER_TICK;
         }
 
-        else if (cursors.up.isDown){
+        else if (cursors.up.isDown && touchingDown){
             vehicle.body.velocity.x += VELOCITY_PER_TICK;
+        }
+
+        //every time they go further we will increase their score
+        if(vehicle.body.x > furthestX){
+            score += (vehicle.body.x - furthestX);
+            furthestX = vehicle.body.x;
+            console.log('Score: ' + score);
         }
 
    },
 
 
-    resetPlayer: function(game) {
+    resetPlayer: function() {
+        vehicle.body.velocity.x = 0;
+        vehicle.body.velocity.y = 0;
+        vehicle.body.angularVelocity = 0;
+        vehicle.body.angle = 0;
         vehicle.reset(startX, startY);
-        dist = 0;
-    }
+        score = 0;
+        furthestX = startX;
+    },
 
+    isFlipped: function(sprite, touchingDown) {
+        var angle = sprite.body.angle;
+        return touchingDown && (angle > FLIPPED_ANGLE || angle < -FLIPPED_ANGLE);
+    },
+
+    /*
+     this function uses the p2 collision calculations that are done on every step to find out
+     if the player collides with something on the bottom - it returns true if a collision is happening
+     */
+    touchingDown: function(sprite) {
+        var yAxis = p2.vec2.fromValues(0, 1);
+        var result = false;
+        for (var i = 0; i < this.physics.p2.world.narrowphase.contactEquations.length; i++) {
+            var c = this.physics.p2.world.narrowphase.contactEquations[i];  // cycles through all the contactEquations until it finds our "sprite"
+            if (c.bodyA === sprite.body.data || c.bodyB === sprite.body.data)        {
+                var d = p2.vec2.dot(c.normalA, yAxis); // Normal dot Y-axis
+                if (c.bodyA === sprite.body.data) d *= -1;
+                if (d > 0.5) result = true;
+            }
+        } return result;
+    }
 
 };
