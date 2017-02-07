@@ -15,6 +15,12 @@ var map;                                         // our tile-map
 var tile_layer;                                  // the tile layer, which we don't actually interact with. It's just there to be pretty
 var poly_tiles;                                  // the terrain which we collide with
 
+var buttonRight, buttonLeft;
+var isPressed = {
+    'right': false,
+    'left' : false
+};
+
 var vehicle;                                     // the vehicle!
 var startX = 3 * TS;                             // starting position (we can move this into the maps later if we need)
 var startY = 4 * TS;                             // starting position (we can move this into the maps later if we need)
@@ -28,7 +34,7 @@ var music;                                       // the audio we will be blastin
 var VELOCITY_PER_TICK = 160;                     // the amount of velocity to add per update when a key is pressed
 var VELOCITY_MULTIPLIER = 0.85;                  // the multiplier we apply each update to the current velocity
 
-var ANGULAR_VELOCITY_PER_TICK = 1;               // the amount of angular velocity to add per update when a key is pressed
+var ANGULAR_VELOCITY_PER_TICK = 1.2;               // the amount of angular velocity to add per update when a key is pressed
 var ANGULAR_VELOCITY_MULTIPLIER = 0.9;           // the multiplier we apply each update to the current angular velocity
 var MAX_ANGULAR_VELOCITY = 4;                    // the maximum angular velocity we will allow the vehicle to have
 
@@ -50,8 +56,10 @@ Game.Game.prototype = {
         game.physics.p2.restitution = WORLD_RESTITUTION;
 
 
+
         music = game.add.audio('level_music');
         music.play('', 0, .5, true);
+
 
         // maps will be named in the form of 'map1', 'map2'... etc
         map = game.add.tilemap('map' + LEVEL);
@@ -77,6 +85,25 @@ Game.Game.prototype = {
         vehicle.body.loadPolygon('car_physics', 'car_halfsize');
         game.camera.follow(vehicle);
 
+        buttonLeft = game.add.button(125, (game.world.centerY - 35)*2, 'buttons', function(){
+            isPressed['left'] = false;
+        }, this, 2, 1, 0);
+
+        buttonLeft.onInputDown.add(function() {
+            isPressed['left'] = true;
+        }, this);
+
+        buttonRight= game.add.button(335, (game.world.centerY - 35)*2, 'buttons', function(){
+            isPressed['right'] = false;
+        }, this, 2, 1, 0);
+
+        buttonRight.onInputDown.add(function() {
+            isPressed['right'] = true;
+        }, this);
+
+
+        buttonLeft.fixedToCamera = true;
+        buttonRight.fixedToCamera = true;
 
         cursors = game.input.keyboard.createCursorKeys();
 
@@ -102,10 +129,9 @@ Game.Game.prototype = {
 
             // if the vehicle is touching any surface and is 'flipped' then reset the player
             if(isFlipped(vehicle)){
-                game.resetVehicle();
+                this.resetVehicle();
             }
         }
-
 
         /*
             Player controls
@@ -116,18 +142,24 @@ Game.Game.prototype = {
          */
 
         // apply angular velocity if left or right is pressed
-        if (cursors.right.isDown && touchingDown){
+        if (cursors.right.isDown ){
             vehicle.body.angularVelocity += ANGULAR_VELOCITY_PER_TICK;
+            if(vehicle.body.angularVelocity > MAX_ANGULAR_VELOCITY){
+                vehicle.body.angularVelocity = MAX_ANGULAR_VELOCITY;
+            }
         }
-        else if (cursors.left.isDown && touchingDown){
+        else if (cursors.left.isDown ){
             vehicle.body.angularVelocity -= ANGULAR_VELOCITY_PER_TICK;
+            if(vehicle.body.angularVelocity < -MAX_ANGULAR_VELOCITY){
+                vehicle.body.angularVelocity = -MAX_ANGULAR_VELOCITY;
+            }
         }
 
         // apply velocity if up/down arrow pressed
-        if(cursors.down.isDown && touchingDown){
+        if(touchingDown && (cursors.down.isDown || isPressed['left'])){
             vehicle.body.velocity.x -= VELOCITY_PER_TICK;
         }
-        else if (cursors.up.isDown && touchingDown){
+        else if (touchingDown && (cursors.up.isDown || isPressed['right'])){
             vehicle.body.velocity.x += VELOCITY_PER_TICK;
         }
 
@@ -148,7 +180,7 @@ Game.Game.prototype = {
         later. Also sets a game level variable 'resetting' to true, until the vehicle
         is moved back to the beginning.
      */
-    resetVehicle: function(game) {
+    resetVehicle: function() {
         resetting = true;
         vehicle.body.velocity.x = 0;
         vehicle.body.velocity.y = 0;
@@ -156,7 +188,7 @@ Game.Game.prototype = {
         score = 0;
         furthestX = startX;
 
-        game.time.events.add(Phaser.Timer.SECOND * 2, function() {
+        this.time.events.add(Phaser.Timer.SECOND * 2, function() {
             vehicle.body.angle = 0;
             vehicle.reset(startX, startY);
             resetting = false;

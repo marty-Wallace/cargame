@@ -44,7 +44,8 @@ Game.Preloader.resources = {
     ],
 
     'spritesheet' : [
-        ['car', 'assets/img/car_halfsize.png', 132, 43]
+        ['car', 'assets/img/car_halfsize.png', 132, 43],
+        ['buttons', 'assets/img/buttons.png', 193, 71]
     ],
 
     'audio': [

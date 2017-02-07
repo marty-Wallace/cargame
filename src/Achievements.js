@@ -10,14 +10,16 @@ Game.Achievements = function(game){
 };
 
 Game.Achievements.prototype = {
-    init:function(){
+
+    init: function(){
 
     },
-    preload:function(){
+
+    preload: function(){
 
     },
 
-    create:function(){
+    create: function(){
 
     }
 };
