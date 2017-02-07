@@ -104,6 +104,7 @@ Game.Game.prototype = {
         }
 
         else if (cursors.up.isDown){
+            //for testing purposes, cause I keep getting stuck.
             vehicle.body.velocity.y -= 400;
         }
 
