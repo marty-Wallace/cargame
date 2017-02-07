@@ -7,38 +7,40 @@
 
 Game.Game = function(game) { };
 
+var LEVEL = 2;                                   // the current level we are testing
+var level32s = [2];                              // the list of levels which use a 32x32px tile-set, (so we know which one to load)
+var TS = level32s.indexOf(LEVEL) > -1 ? 32 : 64; // assign the tile size
 
-var map;                                // our tile-map
-var tile_layer;                         // the tile layer, which we don't actually interact with. It's just there to be pretty
-var poly_tiles;                         // the terrain which we collide with
+var map;                                         // our tile-map
+var tile_layer;                                  // the tile layer, which we don't actually interact with. It's just there to be pretty
+var poly_tiles;                                  // the terrain which we collide with
 
-var vehicle;                            // the vehicle!
-var startX = 46, startY = 4*32;         // starting position (we can move this into the maps later if we need)
-var cursors;                            // all of our possible cursor actions
-var score = 0;                          // the current score of the player
-var furthestX = startX;                 // the further the player gets the more we will add to their score (maybe)
+var vehicle;                                     // the vehicle!
+var startX = 3 * TS;                             // starting position (we can move this into the maps later if we need)
+var startY = 4 * TS;                             // starting position (we can move this into the maps later if we need)
+var cursors;                                     // all of our possible cursor actions
+var score = 0;                                   // the current score of the player
+var furthestX = startX;                          // the further the player gets the more we will add to their score (maybe)
+var resetting = false;                           // make sure we don't reset while we're resetting
 
-var music;                              // the audio we will be blastin
+var music;                                       // the audio we will be blasting!!
 
-var VELOCITY_PER_TICK = 160;            // the amount of velocity to add per update when a key is pressed
-var VELOCITY_MULTIPLIER = 0.85;         // the multiplier we apply each update to the current velocity
+var VELOCITY_PER_TICK = 160;                     // the amount of velocity to add per update when a key is pressed
+var VELOCITY_MULTIPLIER = 0.85;                  // the multiplier we apply each update to the current velocity
 
-var ANGULAR_VELOCITY_PER_TICK = 1;      // the amount of angular velocity to add per update when a key is pressed
-var ANGULAR_VELOCITY_MULTIPLIER = 0.9;  // the multiplier we apply each update to the current angular velocity
-var MAX_ANGULAR_VELOCITY = 4;           // the maximum angular velocity we will allow the vehicle to have
+var ANGULAR_VELOCITY_PER_TICK = 1;               // the amount of angular velocity to add per update when a key is pressed
+var ANGULAR_VELOCITY_MULTIPLIER = 0.9;           // the multiplier we apply each update to the current angular velocity
+var MAX_ANGULAR_VELOCITY = 4;                    // the maximum angular velocity we will allow the vehicle to have
 
-var FLIPPED_ANGLE = 91;                // the maximum angle in degrees where we consider the vehicle to not be flipped
+var FLIPPED_ANGLE = 91;                          // the maximum angle in degrees where we consider the vehicle to not be flipped
 
-var WORLD_RESTITUTION = 0.25;           // how bouncy is the world we live in
-var WORLD_GRAVITY = 1800;               // how much gravity in the world
+var WORLD_RESTITUTION = 0.25;                    // how bouncy is the world we live in
+var WORLD_GRAVITY = 1800;                        // how much gravity in the world
 
-var LEVEL = 2;                          // the current level we are testing
-var level32s = [2];                     // the list of levels which use a 32x32px tile-set, (so we know which one to load)
 
 Game.Game.prototype = {
 
     create: function(game){
-
 
         game.stage.smoothed = true;
 
@@ -94,6 +96,10 @@ Game.Game.prototype = {
     update: function(game) {
 
 
+        if(resetting){
+            return;
+        }
+
         var touchingDown = this.touchingDown(vehicle);
 
         if(touchingDown){
@@ -101,7 +107,7 @@ Game.Game.prototype = {
             vehicle.body.angularVelocity *= ANGULAR_VELOCITY_MULTIPLIER;
         }
 
-        if(this.isFlipped(vehicle, touchingDown)) {
+        if(touchingDown && this.isFlipped(vehicle)) {
             this.resetPlayer();
         }
 
@@ -150,18 +156,23 @@ Game.Game.prototype = {
 
 
     resetPlayer: function() {
+        resetting = true;
         vehicle.body.velocity.x = 0;
         vehicle.body.velocity.y = 0;
         vehicle.body.angularVelocity = 0;
-        vehicle.body.angle = 0;
-        vehicle.reset(startX, startY);
+
         score = 0;
         furthestX = startX;
+        this.time.events.add(Phaser.Timer.SECOND * 2, function() {
+            vehicle.body.angle = 0;
+            vehicle.reset(startX, startY);
+            resetting = false;
+        });
     },
 
-    isFlipped: function(sprite, touchingDown) {
+    isFlipped: function(sprite) {
         var angle = sprite.body.angle;
-        return touchingDown && (angle > FLIPPED_ANGLE || angle < -FLIPPED_ANGLE);
+        return angle > FLIPPED_ANGLE || angle < -FLIPPED_ANGLE;
     },
 
     /*
