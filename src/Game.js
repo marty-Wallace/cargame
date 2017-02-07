@@ -104,6 +104,7 @@ Game.Game.prototype = {
 
         buttonLeft.fixedToCamera = true;
         buttonRight.fixedToCamera = true;
+        //okay
 
         cursors = game.input.keyboard.createCursorKeys();
 
