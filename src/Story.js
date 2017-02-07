@@ -11,6 +11,7 @@ Game.Story.prototype = {
     init: function(){
 
     },
+
     preload: function(){
 
     },

@@ -44,29 +44,20 @@ Game.Game.prototype = {
 
         game.stage.smoothed = true;
 
+        // start up p2 physics and set gravity/restitution
         game.physics.startSystem(Phaser.Physics.P2JS);
         game.physics.p2.gravity.y = WORLD_GRAVITY;
         game.physics.p2.restitution = WORLD_RESTITUTION;
 
+
         music = game.add.audio('level_music');
         music.play('', 0, .5, true);
 
-
-        /*
-        // csv style loading
-        map = this.add.tilemap('map', 64, 64);
-        map.addTilesetImage('tileset');
-        layer = map.createLayer(0);
-        layer.resizeWorld();
-
-        map.setCollisionBetween(1, 33);
-         game.physics.p2.convertTilemap(map, layer);
-        */
-
-
+        // maps will be named in the form of 'map1', 'map2'... etc
         map = game.add.tilemap('map' + LEVEL);
-        //JSON style loading
-        if( level32s.indexOf(LEVEL) > -1){
+
+        // assign either 32x32 or 64x64 tileset based on the level
+        if(TS == 32){
             map.addTilesetImage('32x32tileset', '32x32tileset');
         }else{
             map.addTilesetImage('tileset', 'tileset');
@@ -74,9 +65,9 @@ Game.Game.prototype = {
 
         tile_layer = map.createLayer('tiles');
         tile_layer.resizeWorld();
-
         game.physics.p2.convertTilemap(map, tile_layer);
 
+        // converts the polyline object layer created in tiled named 'terrain' into a collidable object.
         poly_tiles = game.physics.p2.convertCollisionObjects(map, 'terrain', true);
 
 
@@ -96,56 +87,51 @@ Game.Game.prototype = {
     update: function(game) {
 
 
+        // vehicle is resetting. Freeze all vehicle controls
         if(resetting){
             return;
         }
 
+        //touchingDown is an expensive operation, calculate once per update and store it
         var touchingDown = this.touchingDown(vehicle);
 
         if(touchingDown){
+            // if the vehicle is touching any surface then apply multipliers to mimic friction
             vehicle.body.velocity.x *= VELOCITY_MULTIPLIER;
             vehicle.body.angularVelocity *= ANGULAR_VELOCITY_MULTIPLIER;
+
+            // if the vehicle is touching any surface and is 'flipped' then reset the player
+            if(isFlipped(vehicle)){
+                game.resetVehicle();
+            }
         }
 
-        if(touchingDown && this.isFlipped(vehicle)) {
-            this.resetPlayer();
-        }
 
         /*
+            Player controls
             Right key applies anti-clockwise angular velocity
             Left key applies clockwise angular velocity
             Up key applies forward momentum (always to the right for now)
             Down key applies backwards momentum (always to the left for now)
          */
 
+        // apply angular velocity if left or right is pressed
         if (cursors.right.isDown && touchingDown){
             vehicle.body.angularVelocity += ANGULAR_VELOCITY_PER_TICK;
-            /*
-            if(vehicle.body.angularVelocity > MAX_ANGULAR_VELOCITY){
-                vehicle.body.angularVelocity = MAX_ANGULAR_VELOCITY;
-            }
-            */
-
         }
-
         else if (cursors.left.isDown && touchingDown){
             vehicle.body.angularVelocity -= ANGULAR_VELOCITY_PER_TICK;
-            /*
-            if(vehicle.body.angularVelocity < -MAX_ANGULAR_VELOCITY){
-                vehicle.body.angularVelocity = -MAX_ANGULAR_VELOCITY;
-            }
-            */
         }
 
+        // apply velocity if up/down arrow pressed
         if(cursors.down.isDown && touchingDown){
             vehicle.body.velocity.x -= VELOCITY_PER_TICK;
         }
-
         else if (cursors.up.isDown && touchingDown){
             vehicle.body.velocity.x += VELOCITY_PER_TICK;
         }
 
-        //every time they go further we will increase their score
+        // increase player score if they have moved forward
         if(vehicle.body.x > furthestX){
             score += (vehicle.body.x - furthestX);
             furthestX = vehicle.body.x;
@@ -155,29 +141,33 @@ Game.Game.prototype = {
    },
 
 
-    resetPlayer: function() {
+    /*
+        Function that creates a delayed reset on the vehicle.
+        Immediately sets the vehicles velocity and angular velocity to 0
+        then creates a game event that will reset the position of the vehicle
+        later. Also sets a game level variable 'resetting' to true, until the vehicle
+        is moved back to the beginning.
+     */
+    resetVehicle: function(game) {
         resetting = true;
         vehicle.body.velocity.x = 0;
         vehicle.body.velocity.y = 0;
         vehicle.body.angularVelocity = 0;
-
         score = 0;
         furthestX = startX;
-        this.time.events.add(Phaser.Timer.SECOND * 2, function() {
+
+        game.time.events.add(Phaser.Timer.SECOND * 2, function() {
             vehicle.body.angle = 0;
             vehicle.reset(startX, startY);
             resetting = false;
         });
     },
 
-    isFlipped: function(sprite) {
-        var angle = sprite.body.angle;
-        return angle > FLIPPED_ANGLE || angle < -FLIPPED_ANGLE;
-    },
 
     /*
-     this function uses the p2 collision calculations that are done on every step to find out
-     if the player collides with something on the bottom - it returns true if a collision is happening
+        Function to check if a sprite it colliding with the ground.
+        Uses the p2 collision calculations that are done on every step to find out
+        if the player collides with something on the bottom - it returns true if a collision is happening
      */
     touchingDown: function(sprite) {
         var yAxis = p2.vec2.fromValues(0, 1);
@@ -193,3 +183,14 @@ Game.Game.prototype = {
     }
 
 };
+
+/*
+    Function to check if a sprite is considered 'flipped' based on the angle set out in
+    the game constants.
+    Returns true if the sprite is flipped. Else false
+ */
+function isFlipped(sprite) {
+    var angle = sprite.body.angle;
+    return angle > FLIPPED_ANGLE || angle < -FLIPPED_ANGLE;
+}
+
