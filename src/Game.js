@@ -20,10 +20,10 @@ var dist = 0;
 var music;
 
 var VELOCITY_PER_TICK = 150;
-var VELOCITY_MUTIPLIER = 0.85;
+var VELOCITY_MULTIPLIER = 0.85;
 
 var ANGULAR_VELOCITY_PER_TICK = 1;
-var ANGULAR_VELOCITY_MUTIPLIER = 0.9;
+var ANGULAR_VELOCITY_MULTIPLIER = 0.9;
 var MAX_ANGULAR_VELOCITY = 4;
 
 var WORLD_RESTITUTION = 0.25;
@@ -89,8 +89,8 @@ Game.Game.prototype = {
 
     update: function(game) {
 
-        vehicle.body.velocity.x *= VELOCITY_MUTIPLIER;
-        vehicle.body.angularVelocity *= ANGULAR_VELOCITY_MUTIPLIER;
+        vehicle.body.velocity.x *= VELOCITY_MULTIPLIER;
+        vehicle.body.angularVelocity *= ANGULAR_VELOCITY_MULTIPLIER;
 
         /*
             Right key applies anti-clockwise angular velocity
