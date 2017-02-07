@@ -7,14 +7,15 @@
 Game.Story = function(game) { };
 
 Game.Story.prototype = {
-    init:function(){
+
+    init: function(){
 
     },
-    preload:function(){
+    preload: function(){
 
     },
 
-    create:function(){
+    create: function(){
 
     }
 };

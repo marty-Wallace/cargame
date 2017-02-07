@@ -39,6 +39,7 @@ Game.Preloader.prototype = {
 Game.Preloader.resources = {
 
     'image' : [
+        ['32x32tileset', 'assets/img/32x32level_tileset.png'],
         ['tileset', 'assets/img/level_tileset.png']
     ],
 
@@ -51,7 +52,9 @@ Game.Preloader.resources = {
     ],
 
     'tilemap': [
-        ['map', 'assets/maps/level1_p2_3.json', null, Phaser.Tilemap.TILED_JSON]    /*JSON style tilemap loading */
+        ['map2', 'assets/maps/level2_p2.json', null, Phaser.Tilemap.TILED_JSON],    /*JSON style tilemap loading */
+        ['map1', 'assets/maps/level1_p2.json', null, Phaser.Tilemap.TILED_JSON]    /*JSON style tilemap loading */
+
         //['map', 'assets/maps/level1.csv']                                         /* CSV style Tilemap loading */
 
     ],

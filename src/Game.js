@@ -22,9 +22,15 @@ var music;
 var VELOCITY_PER_TICK = 150;
 var VELOCITY_MUTIPLIER = 0.85;
 
-
 var ANGULAR_VELOCITY_PER_TICK = 1;
 var ANGULAR_VELOCITY_MUTIPLIER = 0.9;
+var MAX_ANGULAR_VELOCITY = 4;
+
+var WORLD_RESTITUTION = 0.25;
+var WORLD_GRAVITY = 1800;
+
+var LEVEL = 2;
+var level32s = [2];
 
 Game.Game.prototype = {
 
@@ -34,11 +40,15 @@ Game.Game.prototype = {
         game.stage.smoothed = true;
 
         game.physics.startSystem(Phaser.Physics.P2JS);
+        game.physics.p2.gravity.y = WORLD_GRAVITY;
+        game.physics.p2.restitution = WORLD_RESTITUTION;
 
         music = game.add.audio('level_music');
         music.play('', 0, .5, true);
+
+
         /*
-        //csv style loading
+        // csv style loading
         map = this.add.tilemap('map', 64, 64);
         map.addTilesetImage('tileset');
         layer = map.createLayer(0);
@@ -48,12 +58,14 @@ Game.Game.prototype = {
          game.physics.p2.convertTilemap(map, layer);
         */
 
-        game.physics.p2.gravity.y = 1800;
-        game.physics.p2.restitution = 0.15;
 
+        map = game.add.tilemap('map' + LEVEL);
         //JSON style loading
-        map = game.add.tilemap('map');
-        map.addTilesetImage('tileset', 'tileset');
+        if( level32s.indexOf(LEVEL) > -1){
+            map.addTilesetImage('32x32tileset', '32x32tileset');
+        }else{
+            map.addTilesetImage('tileset', 'tileset');
+        }
 
         tile_layer = map.createLayer('tiles');
         tile_layer.resizeWorld();
@@ -77,13 +89,17 @@ Game.Game.prototype = {
 
     update: function(game) {
 
-        console.log(vehicle.body.angle);
-
-        vehicle.body.velocity.x *= .85;
+        vehicle.body.velocity.x *= VELOCITY_MUTIPLIER;
         vehicle.body.angularVelocity *= ANGULAR_VELOCITY_MUTIPLIER;
 
-        if (cursors.left.isDown){
-            vehicle.body.velocity.x -= 150;
+        /*
+            Right key applies anti-clockwise angular velocity
+            Left key applies clockwise angular velocity
+            Up key applies forward momentum (always to the right for now)
+            Down key applies backwards momentum (always to the left for now)
+         */
+
+        if (cursors.right.isDown){
             vehicle.body.angularVelocity += ANGULAR_VELOCITY_PER_TICK;
             /*
             if(vehicle.body.angularVelocity > MAX_ANGULAR_VELOCITY){
@@ -93,8 +109,7 @@ Game.Game.prototype = {
 
         }
 
-        else if (cursors.right.isDown){
-            vehicle.body.velocity.x += 150;
+        else if (cursors.left.isDown){
             vehicle.body.angularVelocity -= ANGULAR_VELOCITY_PER_TICK;
             /*
             if(vehicle.body.angularVelocity < - MAX_ANGULAR_VELOCITY){
@@ -103,9 +118,12 @@ Game.Game.prototype = {
             */
         }
 
+        if(cursors.down.isDown){
+            vehicle.body.velocity.x -= VELOCITY_PER_TICK;
+        }
+
         else if (cursors.up.isDown){
-            //for testing purposes, cause I keep getting stuck.
-            vehicle.body.velocity.y -= 400;
+            vehicle.body.velocity.x += VELOCITY_PER_TICK;
         }
 
    },
