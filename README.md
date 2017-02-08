@@ -7,6 +7,6 @@ A phaser.io game for our cosc224 final project. Currently branched off from the 
 - built with grunt using the command [grunt --uglify true]
 
 
-Current testing links: 
-Level 1: https://dproc-cosc224.github.io/projectxgame/?level=1
-Level 2: https://dproc-cosc224.github.io/projectxgame/?level=2
+###Current testing links: 
+- Level 1: https://dproc-cosc224.github.io/projectxgame/?level=1
+- Level 2: https://dproc-cosc224.github.io/projectxgame/?level=2
