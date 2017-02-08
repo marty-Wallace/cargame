@@ -3,13 +3,14 @@
  *
  * The Game state is the main game loop. All game related logic will reside in this state. Upon completion of the game the Game state will
  * start the Achievements state to display to the user the prize they one.
+ *
  */
 
 Game.Game = function(game) { };
 
-var LEVEL = 2;                                   // the current level we are testing
-var level32s = [2];                              // the list of levels which use a 32x32px tile-set, (so we know which one to load)
-var TS = level32s.indexOf(LEVEL) > -1 ? 32 : 64; // assign the tile size
+var LEVEL = 'level' in queryDict? parseInt(queryDict['level']) : 2;     // the current level we are testing
+var level32s = [2];                                                     // the list of levels which use a 32x32px tile-set, (so we know which one to load)
+var TS = level32s.indexOf(LEVEL) > -1 ? 32 : 64;                        // assign the tile size
 
 var map;                                         // our tile-map
 var tile_layer;                                  // the tile layer, which we don't actually interact with. It's just there to be pretty
