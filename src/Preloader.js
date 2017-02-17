@@ -53,6 +53,7 @@ Game.Preloader.resources = {
     ],
 
     'tilemap': [
+        ['map3', 'assets/maps/level3.json', null, Phaser.Tilemap.TILED_JSON],    /*JSON style tilemap loading */
         ['map2', 'assets/maps/level2.json', null, Phaser.Tilemap.TILED_JSON],    /*JSON style tilemap loading */
         ['map1', 'assets/maps/level1.json', null, Phaser.Tilemap.TILED_JSON]    /*JSON style tilemap loading */
 
