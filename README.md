@@ -1,6 +1,6 @@
 # projectxgame
 
-A phaser.io game/advertisement for our cosc224 final project.
+A car game built in Phaser.io
 
 ###Uses a custom build of the phaser.min.js:
 - phaser.min.js v 2.6.2
@@ -8,6 +8,6 @@ A phaser.io game/advertisement for our cosc224 final project.
 
 
 ###Current testing links: 
-- Level 1(64x64px tileset): https://dproc-cosc224.github.io/projectxgame/?level=1
-- Level 2(32x32px tileset): https://dproc-cosc224.github.io/projectxgame/?level=2
-- Level 3(32x32px tileset): https://dproc-cosc224.github.io/projectxgame/?level=3
+- Level 1(64x64px tileset): https://marty-wallace.github.io/cargame/?level=1
+- Level 2(32x32px tileset): https://marty-wallace.github.io/cargame/?level=2
+- Level 3(32x32px tileset): https://marty-wallace.github.io/cargame/?level=3
